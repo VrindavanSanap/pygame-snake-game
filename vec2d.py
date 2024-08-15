@@ -9,11 +9,9 @@ class vec2d(object):
  
     def __init__(self, x_or_pair, y = None):
         if y == None:
-            self.x = x_or_pair[0]
-            self.y = x_or_pair[1]
+            self.x, self.y = x_or_pair
         else:
-            self.x = x_or_pair
-            self.y = y
+            self.x, self.y = x_or_pair, y
  
     def __len__(self):
         return 2
@@ -34,7 +32,7 @@ class vec2d(object):
         else:
             raise IndexError("Invalid subscript "+str(key)+" to vec2d")
  
-    # String representaion (for debugging)
+    # String representation (for debugging)
     def __repr__(self):
         return 'vec2d(%s, %s)' % (self.x, self.y)
     
@@ -58,32 +56,25 @@ class vec2d(object):
     def _o2(self, other, f):
         "Any two-operator operation where the left operand is a vec2d"
         if isinstance(other, vec2d):
-            return vec2d(f(self.x, other.x),
-                         f(self.y, other.y))
+            return vec2d(f(self.x, other.x), f(self.y, other.y))
         elif (hasattr(other, "__getitem__")):
-            return vec2d(f(self.x, other[0]),
-                         f(self.y, other[1]))
+            return vec2d(f(self.x, other[0]), f(self.y, other[1]))
         else:
-            return vec2d(f(self.x, other),
-                         f(self.y, other))
+            return vec2d(f(self.x, other), f(self.y, other))
  
     def _r_o2(self, other, f):
         "Any two-operator operation where the right operand is a vec2d"
         if (hasattr(other, "__getitem__")):
-            return vec2d(f(other[0], self.x),
-                         f(other[1], self.y))
+            return vec2d(f(other[0], self.x), f(other[1], self.y))
         else:
-            return vec2d(f(other, self.x),
-                         f(other, self.y))
+            return vec2d(f(other, self.x), f(other, self.y))
  
     def _io(self, other, f):
-        "inplace operator"
+        "Inplace operator"
         if (hasattr(other, "__getitem__")):
-            self.x = f(self.x, other[0])
-            self.y = f(self.y, other[1])
+            self.x, self.y = f(self.x, other[0]), f(self.y, other[1])
         else:
-            self.x = f(self.x, other)
-            self.y = f(self.y, other)
+            self.x, self.y = f(self.x, other), f(self.y, other)
         return self
  
     # Addition
@@ -98,14 +89,11 @@ class vec2d(object):
     
     def __iadd__(self, other):
         if isinstance(other, vec2d):
-            self.x += other.x
-            self.y += other.y
+            self.x, self.y = self.x + other.x, self.y + other.y
         elif hasattr(other, "__getitem__"):
-            self.x += other[0]
-            self.y += other[1]
+            self.x, self.y = self.x + other[0], self.y + other[1]
         else:
-            self.x += other
-            self.y += other
+            self.x, self.y = self.x + other, self.y + other
         return self
  
     # Subtraction
@@ -125,14 +113,11 @@ class vec2d(object):
             return vec2d(other - self.x, other - self.y)
     def __isub__(self, other):
         if isinstance(other, vec2d):
-            self.x -= other.x
-            self.y -= other.y
+            self.x, self.y = self.x - other.x, self.y - other.y
         elif (hasattr(other, "__getitem__")):
-            self.x -= other[0]
-            self.y -= other[1]
+            self.x, self.y = self.x - other[0], self.y - other[1]
         else:
-            self.x -= other
-            self.y -= other
+            self.x, self.y = self.x - other, self.y - other
         return self
  
     # Multiplication
@@ -147,14 +132,11 @@ class vec2d(object):
     
     def __imul__(self, other):
         if isinstance(other, vec2d):
-            self.x *= other.x
-            self.y *= other.y
+            self.x, self.y = self.x*other.x, self.y*other.y
         elif (hasattr(other, "__getitem__")):
-            self.x *= other[0]
-            self.y *= other[1]
+            self.x, self.y = self.x*other[0], self.y*other[1]
         else:
-            self.x *= other
-            self.y *= other
+            self.x, self.y = self.x*other, self.y*other
         return self
  
     # Division
@@ -190,7 +172,7 @@ class vec2d(object):
     def __rdivmod__(self, other):
         return self._r_o2(other, operator.divmod)
  
-    # Exponentation
+    # Exponentiation
     def __pow__(self, other):
         return self._o2(other, operator.pow)
     def __rpow__(self, other):
@@ -232,7 +214,7 @@ class vec2d(object):
     def __invert__(self):
         return vec2d(-self.x, -self.y)
  
-    # vectory functions
+    # Vector functions
     def get_length_sqrd(self): 
         return self.x**2 + self.y**2
  
@@ -250,8 +232,7 @@ class vec2d(object):
         sin = math.sin(radians)
         x = self.x*cos - self.y*sin
         y = self.x*sin + self.y*cos
-        self.x = x
-        self.y = y
+        self.x, self.y = x, y
  
     def rotated(self, angle_degrees):
         radians = math.radians(angle_degrees)
@@ -332,4 +313,3 @@ class vec2d(object):
     
     def inttup(self):
         return (int(self.x), int(self.y))
-    
